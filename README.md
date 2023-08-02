@@ -32,5 +32,5 @@
 
 ------------
 
-1.[jdao项目地址：https://github.com/donnie4w/jdao](https://github.com/donnie4w/jdao "jdao项目地址：https://github.com/donnie4w/jdao")
-2.[jdao项目地址2：https://gitee.com/donnie4w/jdao](https://gitee.com/donnie4w/jdao "jdao项目地址2：https://gitee.com/donnie4w/jdao")
+1. [jdao项目地址：https://github.com/donnie4w/jdao](https://github.com/donnie4w/jdao "jdao项目地址：https://github.com/donnie4w/jdao")
+2. [jdao项目地址2：https://gitee.com/donnie4w/jdao](https://gitee.com/donnie4w/jdao "jdao项目地址2：https://gitee.com/donnie4w/jdao")
