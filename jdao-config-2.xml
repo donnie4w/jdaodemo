@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.github.donnie4w.jdao.action.Mapperface2">
+
+    <!-- Select hstest1 by id -->
+    <select id="selectHstest1" parameterType="int" resultType="io.github.donnie4w.jdao.dao.Hstest1">
+        SELECT * FROM hstest1 WHERE id &gt;0 AND id &lt;11 GROUP BY id LIMIT #{offset},#{limit}
+    </select>
+
+</mapper>
