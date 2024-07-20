@@ -1,4 +1,4 @@
-##  Jdao Test Demo [[Englist](https://github.com/donnie4w/jdaodemo/blob/master/README.md)]
+##  Jdao Test Demo [[English](https://github.com/donnie4w/jdaodemo/blob/master/README.md)]
 
 ###### 这是Jdao的测试demo程序，已经打包sqlite测试数据库hstest.db文件,并生成元素数据。demo程序可以直接运行，除了需要测试读写分离或多数据源操作，其他Test默认操作hstest.db数据库数据，可以直接运行，查看数据操作结果。
 
