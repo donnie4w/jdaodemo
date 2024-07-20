@@ -34,7 +34,7 @@ import java.math.BigDecimal;
  * dbtype:mysql ,database:hstest ,table:hstest
  *
  * @version jdao version 2.0.1
- * @date 2024-07-19 10:34:13 
+ * @date 2024-07-19 21:12:49 
  */
 public class Hstest extends Table<Hstest> implements Serializable {
 
@@ -150,7 +150,7 @@ public class Hstest extends Table<Hstest> implements Serializable {
         return "id:" + id + " , " + "age:" + age + " , " + "rowname:" + rowname + " , " + "value:" + value + " , " + "updatetime:" + updatetime + " , " + "body:" + body + " , " + "floa:" + floa + " , " + "level:" + level;
     }
 
-	public void copy(Hstest h) {
+	public Hstest copy(Hstest h) {
 		this.setId(h.getId());
 		this.setAge(h.getAge());
 		this.setRowname(h.getRowname());
@@ -159,6 +159,7 @@ public class Hstest extends Table<Hstest> implements Serializable {
 		this.setBody(h.getBody());
 		this.setFloa(h.getFloa());
 		this.setLevel(h.getLevel());
+		return this;
 	}
 
     public void scan(String fieldname, Object obj) throws JdaoException {
