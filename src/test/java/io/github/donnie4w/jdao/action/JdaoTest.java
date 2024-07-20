@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +19,7 @@ public class JdaoTest {
 
     static {
         Jdao.init(DataSourceFactory.getDataSourceBySqlite(), DBType.SQLITE);
+
         Jdao.setLogger(true);
     }
 
@@ -28,14 +28,14 @@ public class JdaoTest {
     public void select() throws Exception {
         Hstest1 t = new Hstest1();
         t.where(Hstest1.ID.GT(1));
-        t.limit(20,10);
+        t.limit(20, 10);
         List<Hstest1> list = t.selects();
         for (Hstest1 hstest1 : list) {
             System.out.println(hstest1);
         }
         System.out.println("-------------------Jdao Hstest1-------------------");
         System.out.println();
-        List<DataBean> dblist =  Jdao.executeQueryBeans("select * from Hstest1  order by id desc limit 5");
+        List<DataBean> dblist = Jdao.executeQueryBeans("select * from Hstest1  order by id desc limit 5");
         for (DataBean dataBean : dblist) {
             System.out.println(dataBean);
         }
@@ -44,16 +44,12 @@ public class JdaoTest {
 
     @Test
     public void select2() throws Exception {
-        DataSource ds = DataSourceFactory.getDataSourceByMysql();
-        Hstest2 t = new Hstest2();
-//        t.useDataSource(ds,DBType.MYSQL);
-        t.where(Hstest2.NAME.LLIKE("1"));
-        t.limit(0,10);
-        List<Hstest2> list = t.selects();
+        //指定本次操作的数据源
+        Hstest2 t = new Hstest2().useDataSource(DataSourceFactory.getDataSourceByMysql(),DBType.MYSQL);
+        List<Hstest2> list = t.where(Hstest2.ID.EQ(5)).selects();
         for (Hstest2 hs : list) {
             System.out.println(hs);
         }
-        System.out.println("-------------------Jdao Hstest2-------------------");
     }
 
 
@@ -61,14 +57,14 @@ public class JdaoTest {
     public void selectForScan() throws Exception {
         Hstest1 t = new Hstest1();
         t.where(Hstest1.ID.GT(1));
-        t.limit(20,10);
+        t.limit(20, 10);
         List<Hstest1> list = t.selects();
         for (Hstest1 hstest1 : list) {
             System.out.println(hstest1);
         }
         System.out.println("-------------------Jdao Hstest1-------------------");
         System.out.println();
-        List<Hs1> dblist =  Jdao.executeQueryList(Hs1.class,"select * from Hstest1  order by id desc limit 5");
+        List<Hs1> dblist = Jdao.executeQueryList(Hs1.class, "select * from Hstest1  order by id desc limit 5");
         for (Hs1 hs1 : dblist) {
             System.out.println(hs1);
         }
@@ -77,17 +73,17 @@ public class JdaoTest {
 
     @Test
     public void selects() throws JdaoException, JdaoClassException, SQLException {
-        Hstest2 t = new Hstest2();
-        t.where(Hstest2.ID.LE(3), Hstest2.ID.GE(0).OR(Hstest2.ID.EQ(10)));
-        t.groupBy(Hstest2.ID);
-        t.having(Hstest2.ID.count().LT(2));
-        t.orderBy(Hstest2.ID.asc());
-        t.limit(0, 5);
-        List<Hstest2> list = t.selects();
+        Hstest2 hs2 = new Hstest2()
+                .where(Hstest2.ID.LE(3), Hstest2.ID.GE(0).OR(Hstest2.ID.EQ(10)))
+                .groupBy(Hstest2.ID)
+                .having(Hstest2.ID.count().LT(2))
+                .orderBy(Hstest2.ID.asc())
+                .limit(0, 5);
+
+        List<Hstest2> list = hs2.selects();
         for (Hstest2 hs : list) {
             System.out.println(hs);
         }
-        System.out.println("---------------select  max(id) as id from hstest2 ------------------");
     }
 
     @Test
@@ -118,7 +114,7 @@ public class JdaoTest {
         hs.reset();  //reset hstest object.
         hs.where(Hstest.ID.GT(11), Hstest.ID.LT(12).OR(Hstest.ID.EQ(13)));
         List<Hstest> list = hs.selects();
-        for (Hstest hstest:list){
+        for (Hstest hstest : list) {
             System.out.println(hstest);
         }
         System.out.println("---------------update hstest---------------");
@@ -145,7 +141,7 @@ public class JdaoTest {
         hs.executeBatch();
         System.out.println("-----------------Execute Batch--------------------");
         List<Hstest> list = new Hstest().selects();
-        for (Hstest hstest:list){
+        for (Hstest hstest : list) {
             System.out.println(hstest);
         }
         System.out.println("-----------------Hstest Data--------------------");
@@ -175,13 +171,13 @@ public class JdaoTest {
         System.out.println("-----------------Transaction Commit--------------------");
 
         List<Hstest> list = new Hstest().selects();
-        for (Hstest hstest:list){
+        for (Hstest hstest : list) {
             System.out.println(hstest);
         }
         System.out.println("-----------------Hstest Data--------------------");
 
         List<Hstest1> list1 = new Hstest1().selects();
-        for (Hstest1 hstest1:list1){
+        for (Hstest1 hstest1 : list1) {
             System.out.println(hstest1);
         }
         System.out.println("-----------------Hstest1 Data--------------------");
@@ -207,7 +203,7 @@ public class JdaoTest {
         Hstest hs = Jdao.executeQuery(Hstest.class, "select * from hstest where id=?", 1);
         System.out.println(hs);
 
-        List<Hstest> list = Jdao.executeQueryList(Hstest.class, "select * from hstest limit ?,?", 0,30);
+        List<Hstest> list = Jdao.executeQueryList(Hstest.class, "select * from hstest limit ?,?", 0, 30);
         for (Hstest h : list) {
             System.out.println(h);
         }
@@ -245,10 +241,10 @@ public class JdaoTest {
         Hstest hs = t.select();
         System.out.println(hs);
         byte[] bs = Serializa.encode(hs);
-        System.out.println(String.format("nativeSerialize len(bs)>>%d bytes",bs.length));
+        System.out.printf("nativeSerialize len(bs)>>%d bytes%n", bs.length);
         Hstest hs2 = Serializa.decode(bs, Hstest.class);
         System.out.println(hs2);
-        System.out.println("hs.equals(hs2):"+hs.equals(hs2));
+        System.out.println("hs.equals(hs2):" + hs.equals(hs2));
 
         //use hs2
         hs2.where(Hstest.ID.EQ(1));
@@ -263,15 +259,25 @@ public class JdaoTest {
         Hstest1 hs = t.select();
         System.out.println(hs);
         byte[] bs = hs.encode();
-        System.out.println(String.format("jdaoSerialize len(bs)>>%d bytes",bs.length));
+        System.out.printf("jdaoSerialize len(bs)>>%d bytes%n", bs.length);
         Hstest1 hs2 = new Hstest1().decode(bs);
         System.out.println(hs2);
-        System.out.println("hs.equals(hs2):"+hs.equals(hs2));
+        System.out.println("hs.equals(hs2):" + hs.equals(hs2));
 
         //use hs2
         hs2.where(Hstest1.ID.EQ(1));
         hs2 = hs2.select();
         System.out.println(hs2);
+    }
+
+    @Test
+    public void jdaoCopy() throws JdaoException, JdaoClassException, SQLException {
+        Hstest t = new Hstest();
+        t.where(Hstest.ID.EQ(1));
+        Hstest hs = t.select();
+
+        Hstest hs2 = new Hstest().copy(hs);
+        System.out.println("hs.equals(hs2):" + hs.equals(hs2));
     }
 
     @Test
@@ -293,7 +299,7 @@ public class JdaoTest {
 
     @Test
     public void cache() throws JdaoException, JdaoClassException, SQLException {
-        JdaoCache.bindClass(Hstest.class,new CacheHandle(100));
+        JdaoCache.bindClass(Hstest.class, new CacheHandle(100));
 
         Hstest t = new Hstest();
         t.where(Hstest.ID.EQ(3));
@@ -305,7 +311,7 @@ public class JdaoTest {
         Hstest hs2 = t2.select();
         System.out.println(hs2);
         System.out.println("----------------------GET CACHE---------------------");
-        System.out.println("hs.equals(hs2):"+hs.equals(hs2));
+        System.out.println("hs.equals(hs2):" + hs.equals(hs2));
 
         JdaoCache.removeClass(Hstest.class);
         t2 = new Hstest();
