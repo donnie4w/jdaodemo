@@ -11,7 +11,7 @@
 5. Binding and removing operations of JdaoSlave for data read-write separation
 6. SQL file mapping and interface invocation operations with JdaoMapper
 
-### The detailed usage instructions for Jdao can be found in the user documentation: https://tlnet.top/jdaodoc
+### The detailed usage instructions for Jdao can be found in the user documentation: https://tlnet.top/jdaoendoc
 
 ## The following is an overview of the demo
 
@@ -25,7 +25,7 @@
 
 ```bash
 // Generate configuration file
-jdao.exe init
+win201_jdao.exe init
 ```
 
 2. Modify the `jdao.json` Database Connection
@@ -45,7 +45,7 @@ jdao.exe init
 3. Execute the Command to Generate Data Files
 
 ```bash
-jdao.exe -c jdao.json
+win201_jdao.exe -c jdao.json
 ```
 
 Execution results in generating the following files:
