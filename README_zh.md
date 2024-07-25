@@ -25,7 +25,7 @@
 
 ```bash
 //生成配置文件
-jdao.exe init
+win201_jdao.exe init
 ```
 2.  修改jdao.json的数据库连接
 
@@ -40,7 +40,7 @@ jdao.exe init
 ```
 3.  执行数据文件生成命令
 ```bash
-jdao.exe -c jdao.json
+win201_jdao.exe -c jdao.json
 ```
 ##### 执行结果，生成文件
 
