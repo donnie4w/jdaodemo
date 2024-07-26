@@ -1,5 +1,6 @@
 package io.github.donnie4w.jdao.action;
 
+import io.github.donnie4w.jdao.base.JStruct;
 import io.github.donnie4w.jdao.base.Params;
 import io.github.donnie4w.jdao.base.Type;
 import io.github.donnie4w.jdao.dao.Hs1;
@@ -12,8 +13,9 @@ import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.*;
 
 public class JdaoTest {
 
@@ -22,7 +24,6 @@ public class JdaoTest {
 
         Jdao.setLogger(true);
     }
-
 
     @Test
     public void select() throws Exception {
@@ -45,11 +46,13 @@ public class JdaoTest {
     @Test
     public void select2() throws Exception {
         //指定本次操作的数据源
-        Hstest2 t = new Hstest2().useDataSource(DataSourceFactory.getDataSourceByMysql(),DBType.MYSQL);
+        Hstest2 t = new Hstest2().useDataSource(DataSourceFactory.getDataSourceByMysql(), DBType.MYSQL);
         List<Hstest2> list = t.where(Hstest2.ID.EQ(5)).selects();
         for (Hstest2 hs : list) {
             System.out.println(hs);
         }
+        Jdao.getDefaultDBhandle().executeQueryBean("select * from Hstest1  order by id desc limit ?", 5);
+        Jdao.setDataSource(Hstest.class, DataSourceFactory.getDataSourceByMysql(), DBType.MYSQL);
     }
 
 
@@ -148,6 +151,21 @@ public class JdaoTest {
     }
 
     @Test
+    public void batch2() throws JdaoException, SQLException {
+        List<Object[]> list = new ArrayList<>();
+        list.add(new Object[]{"111", "aaa"});
+        list.add(new Object[]{"222", "bbb"});
+        list.add(new Object[]{"333", "ccc"});
+        Jdao.executeBatch("insert into hstest1(`rowname`,`value`) values(?,?)", list);
+
+        System.out.println("-------------检查数据是否批量操作成功--------------");
+        List<DataBean> dbs = Jdao.executeQueryBeans("select id,rowname,value from hstest1 order by id desc limit ?", 3);
+        for (DataBean dataBean : dbs) {
+            System.out.println(dataBean);
+        }
+    }
+
+    @Test
     public void transaction() throws JdaoException, SQLException, JdaoClassException {
         Transaction tx = Jdao.newTransaction();
         Hstest hs = new Hstest();
@@ -210,6 +228,35 @@ public class JdaoTest {
     }
 
     @Test
+    public void getDataBean() throws JdaoException, SQLException {
+        DataBean dataBean = Jdao.executeQueryBean("select id,age,rowname,updatetime from hstest where id = ?", 15);
+        System.out.println("---------------打印DataBean数据---------------");
+        System.out.println(dataBean);
+        System.out.println("-----------------DataBean 迭代----------------");
+        Iterator<String> iterator = dataBean.iterator();
+        while (iterator.hasNext()) {
+            String name = iterator.next();
+            System.out.println(name + ":" + dataBean.getValue(name));
+        }
+        System.out.println("------------------按字段名获取字段值-------------------");
+        int id = dataBean.findField("id").valueInt();
+        int age = dataBean.findField("age").valueInt();
+        String rowname = dataBean.findField("rowname").valueString();
+        Date updatetime = dataBean.findField("updatetime").valueDate();
+        System.out.println(id + "," + age + "," + rowname + "," + updatetime);
+        System.out.println("------------------按字段顺序获取字段值-------------------");
+        id = dataBean.findField(0).valueInt();  //索引从0开始
+        age = dataBean.findField(1).valueInt();
+        rowname = dataBean.findField(2).valueString();
+        updatetime = dataBean.findField(3).valueDate();
+        System.out.println(id + "," + age + "," + rowname + "," + updatetime);
+
+        System.out.println("------------------DataBean 转javaBean-------------------");
+        Hstest hstest = dataBean.scan(Hstest.class);
+        System.out.println(hstest);
+    }
+
+    @Test
     public void getDataBeans() throws JdaoException, SQLException {
         List<DataBean> list = Jdao.executeQueryBeans("select * from hstest1 limit ?,?", 0, 4);
         for (DataBean dataBean : list) {
@@ -221,18 +268,25 @@ public class JdaoTest {
     }
 
     @Test
-    public void procedure() throws JdaoException {
-        // call proc_test2()
-        new ProcedureCall("proc_test2");
+    public void procedure() throws SQLException, JdaoException {
+        DBhandle mysqlDB = Jdao.newDBhandle(DataSourceFactory.getDataSourceByMysql(),DBType.MYSQL);
+        List<DataBean> list= mysqlDB.executeQueryBeans("call proc_hs(?)", 3);
+        for (DataBean dataBean : list) {
+            System.out.println(dataBean);
+        }
     }
 
+
     @Test
-    public void procedureWithParams() throws JdaoException {
-        // call proc_test(?,?,?)
-        ProcedureCall pc = new ProcedureCall("proc_test", Params.IN(30), Params.OUT(Type.VARCHAR),
-                Params.INOUT("testinout", Type.VARCHAR));
-        System.out.println(pc.value(1));
+    public void procedure2() throws SQLException {
+        DBhandle mysqlDB = Jdao.newDBhandle(DataSourceFactory.getDataSourceByMysql(),DBType.MYSQL);
+        int i = 3;
+        Map<Integer, Object> map = mysqlDB.executeCall("call proc_test(?,?,?)", Params.IN(3), Params.OUT(Type.VARCHAR),
+                Params.INOUT(i, Type.INTEGER));
+        System.out.println("out param :"+map.get(2));
+        System.out.println("inout param :"+map.get(3));
     }
+
 
     @Test
     public void nativeSerialize() throws JdaoException, JdaoClassException, SQLException {
@@ -254,18 +308,19 @@ public class JdaoTest {
 
     @Test
     public void jdaoSerialize() throws JdaoException, JdaoClassException, SQLException {
-        Hstest1 t = new Hstest1();
-        t.where(Hstest1.ID.EQ(3));
-        Hstest1 hs = t.select();
+        DataSource db = DataSourceFactory.getDataSourceByMysql();
+        Jdao.setDataSource(Hstest.class,db,DBType.MYSQL);
+        Hstest t = new Hstest();
+        t.where(Hstest.ID.EQ(3));
+        Hstest hs = t.select();
         System.out.println(hs);
         byte[] bs = hs.encode();
         System.out.printf("jdaoSerialize len(bs)>>%d bytes%n", bs.length);
-        Hstest1 hs2 = new Hstest1().decode(bs);
+        Hstest hs2 = new Hstest().decode(bs);
         System.out.println(hs2);
         System.out.println("hs.equals(hs2):" + hs.equals(hs2));
-
         //use hs2
-        hs2.where(Hstest1.ID.EQ(1));
+        hs2.where(Hstest.ID.EQ(1));
         hs2 = hs2.select();
         System.out.println(hs2);
     }
@@ -284,12 +339,18 @@ public class JdaoTest {
     public void slave() throws JdaoException, JdaoClassException, SQLException {
         System.out.println(Hstest.class.getPackageName());
         JdaoSlave.bindClass(Hstest.class, DataSourceFactory.getDataSourceByMysql(), DBType.MYSQL);
+        JdaoSlave.bindClass(Hstest.class, DataSourceFactory.getDataSourceByPostgre(), DBType.POSTGRESQL);
 
         Hstest t = new Hstest();
         t.where(Hstest.ID.EQ(3));
         Hstest hs = t.select();
         System.out.println(hs);
 
+
+        t = new Hstest().useMaster(true);
+        t.where(Hstest.ID.EQ(3));
+        hs = t.select();
+        System.out.println(hs);
 
         t = new Hstest().useDBhandle(Jdao.getDefaultDBhandle());
         t.where(Hstest.ID.EQ(3));
