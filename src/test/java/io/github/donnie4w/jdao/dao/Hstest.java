@@ -19,28 +19,28 @@
 package io.github.donnie4w.jdao.dao;
 
 import io.github.donnie4w.jdao.base.Fields;
+import io.github.donnie4w.jdao.base.JStruct;
 import io.github.donnie4w.jdao.base.Table;
 import io.github.donnie4w.jdao.base.Util;
 import io.github.donnie4w.jdao.handle.JdaoException;
 import io.github.donnie4w.jdao.util.Serializer;
 import java.util.Map;
 import java.util.HashMap;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Date;
-import java.math.BigDecimal;
+
 /**
- * dbtype:mysql ,database:hstest ,table:hstest
+ * dbtype:sqlite ,database:hstest.db ,table:hstest
  *
  * @version jdao version 2.0.1
- * @date 2024-07-19 21:12:49 
+ * @date 2024-07-24 14:37:41 
  */
-public class Hstest extends Table<Hstest> implements Serializable {
+public class Hstest extends Table<Hstest> {
 
-    private static final long serialVersionUID = 6118074828633154000L;
+	private static final long serialVersionUID = 6118074828633154000L;
 
-    private final static String TABLENAME_ = "hstest";
+	private final static String TABLENAME_ = "hstest";
 
 	public final static Fields<Hstest> ID = new Fields("id");
 	public final static Fields<Hstest> AGE = new Fields("age");
@@ -52,104 +52,107 @@ public class Hstest extends Table<Hstest> implements Serializable {
 	public final static Fields<Hstest> LEVEL = new Fields("level");
 	
 	public Hstest() {
-        super(TABLENAME_, Hstest.class);
-        super.initFields(ID,AGE,ROWNAME,VALUE,UPDATETIME,BODY,FLOA,LEVEL);
-    }
+		super(TABLENAME_, Hstest.class);
+		super.initFields(ID,AGE,ROWNAME,VALUE,UPDATETIME,BODY,FLOA,LEVEL);
+	}
 
-    public Hstest(String tableName) {
-        super(tableName, Hstest.class);
-        super.initFields(ID,AGE,ROWNAME,VALUE,UPDATETIME,BODY,FLOA,LEVEL);
-    }
+	public Hstest(String tableName) {
+		super(tableName, Hstest.class);
+		super.initFields(ID,AGE,ROWNAME,VALUE,UPDATETIME,BODY,FLOA,LEVEL);
+	}
 
-    public void toJdao() {
-        super.init(Hstest.class);
-    }
+	@Override
+	public void toJdao() {
+		super.init(Hstest.class);
+	}
 
-	private int id;
+	private long id;
 	private long age;
 	private String rowname;
 	private String value;
 	private Date updatetime;
 	private byte[] body;
-	private BigDecimal floa;
+	private double floa;
 	private long level;
 
-    public int getId() {
-        return this.id;
-    }
+	public long getId() {
+		return this.id;
+	}
 
-    public void setId(int id) {
-        fieldPut(ID, id);
-        this.id = id;
-    }
+	public void setId(long id) {
+		fieldPut(ID, id);
+		this.id = id;
+	}
 
-    public long getAge() {
-        return this.age;
-    }
+	public long getAge() {
+		return this.age;
+	}
 
-    public void setAge(long age) {
-        fieldPut(AGE, age);
-        this.age = age;
-    }
+	public void setAge(long age) {
+		fieldPut(AGE, age);
+		this.age = age;
+	}
 
-    public String getRowname() {
-        return this.rowname;
-    }
+	public String getRowname() {
+		return this.rowname;
+	}
 
-    public void setRowname(String rowname) {
-        fieldPut(ROWNAME, rowname);
-        this.rowname = rowname;
-    }
+	public void setRowname(String rowname) {
+		fieldPut(ROWNAME, rowname);
+		this.rowname = rowname;
+	}
 
-    public String getValue() {
-        return this.value;
-    }
+	public String getValue() {
+		return this.value;
+	}
 
-    public void setValue(String value) {
-        fieldPut(VALUE, value);
-        this.value = value;
-    }
+	public void setValue(String value) {
+		fieldPut(VALUE, value);
+		this.value = value;
+	}
 
-    public Date getUpdatetime() {
-        return this.updatetime;
-    }
+	public Date getUpdatetime() {
+		return this.updatetime;
+	}
 
-    public void setUpdatetime(Date updatetime) {
-        fieldPut(UPDATETIME, updatetime);
-        this.updatetime = updatetime;
-    }
+	public void setUpdatetime(Date updatetime) {
+		fieldPut(UPDATETIME, updatetime);
+		this.updatetime = updatetime;
+	}
 
-    public byte[] getBody() {
-        return this.body;
-    }
+	public byte[] getBody() {
+		return this.body;
+	}
 
-    public void setBody(byte[] body) {
-        fieldPut(BODY, body);
-        this.body = body;
-    }
+	public void setBody(byte[] body) {
+		fieldPut(BODY, body);
+		this.body = body;
+	}
 
-    public BigDecimal getFloa() {
-        return this.floa;
-    }
+	public double getFloa() {
+		return this.floa;
+	}
 
-    public void setFloa(BigDecimal floa) {
-        fieldPut(FLOA, floa);
-        this.floa = floa;
-    }
+	public void setFloa(double floa) {
+		fieldPut(FLOA, floa);
+		this.floa = floa;
+	}
 
-    public long getLevel() {
-        return this.level;
-    }
+	public long getLevel() {
+		return this.level;
+	}
 
-    public void setLevel(long level) {
-        fieldPut(LEVEL, level);
-        this.level = level;
-    }
+	public void setLevel(long level) {
+		fieldPut(LEVEL, level);
+		this.level = level;
+	}
 
-    public String toString() {
-        return "id:" + id + " , " + "age:" + age + " , " + "rowname:" + rowname + " , " + "value:" + value + " , " + "updatetime:" + updatetime + " , " + "body:" + body + " , " + "floa:" + floa + " , " + "level:" + level;
-    }
+	@Override
+	public String toString() {
+		return "id:" + id + " , " + "age:" + age + " , " + "rowname:" + rowname + " , " + "value:" + value + " , " + "updatetime:" + updatetime + " , " + "body:" + body + " , " + "floa:" + floa + " , " + "level:" + level;
+	}
 
+	@Override
 	public Hstest copy(Hstest h) {
 		this.setId(h.getId());
 		this.setAge(h.getAge());
@@ -162,39 +165,41 @@ public class Hstest extends Table<Hstest> implements Serializable {
 		return this;
 	}
 
-    public void scan(String fieldname, Object obj) throws JdaoException {
-        try {
-            switch (fieldname) {
-                case "id":
-                    setId(Util.asInt(obj));
-                    break;
-                case "age":
-                    setAge(Util.asLong(obj));
-                    break;
-                case "rowname":
-                    setRowname(Util.asString(obj));
-                    break;
-                case "value":
-                    setValue(Util.asString(obj));
-                    break;
-                case "updatetime":
-                    setUpdatetime(Util.asDate(obj));
-                    break;
-                case "body":
-                    setBody(Util.asBytes(obj));
-                    break;
-                case "floa":
-                    setFloa(Util.asBigDecimal(obj));
-                    break;
-                case "level":
-                    setLevel(Util.asLong(obj));
-                    break;
-            }
-        } catch (Exception e) {
-             throw new JdaoException(e);
-        }
+	@Override
+	public void scan(String fieldname, Object obj) throws JdaoException {
+		try {
+			switch (fieldname) {
+				case "id":
+					setId(Util.asLong(obj));
+ 					break;
+				case "age":
+					setAge(Util.asLong(obj));
+ 					break;
+				case "rowname":
+					setRowname(Util.asString(obj));
+ 					break;
+				case "value":
+					setValue(Util.asString(obj));
+ 					break;
+				case "updatetime":
+					setUpdatetime(Util.asDate(obj));
+ 					break;
+				case "body":
+					setBody(Util.asBytes(obj));
+ 					break;
+				case "floa":
+					setFloa(Util.asDouble(obj));
+ 					break;
+				case "level":
+					setLevel(Util.asLong(obj));
+ 					break;
+			}
+		} catch (Exception e) {
+			throw new JdaoException(e);
+		}
 	}
 
+	@Override
 	public byte[] encode() {
 		Map<String, Object> map = new HashMap();
 		map.put("id", this.getId());
@@ -208,6 +213,7 @@ public class Hstest extends Table<Hstest> implements Serializable {
 		return Serializer.encode(map);
 	}
 
+	@Override
 	public Hstest decode(byte[] bs) throws JdaoException {
 		Map<String, Object> map = Serializer.decode(bs);
 		if (map != null) {
@@ -218,16 +224,16 @@ public class Hstest extends Table<Hstest> implements Serializable {
 		return this;
 	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
         Hstest _Hstest = (Hstest) o;
-        return id == _Hstest.id && age == _Hstest.age && Objects.equals(rowname, _Hstest.rowname) && Objects.equals(value, _Hstest.value) && Objects.equals(updatetime, _Hstest.updatetime) && Objects.deepEquals(body, _Hstest.body) && Objects.equals(floa, _Hstest.floa) && level == _Hstest.level;
-    }
+		return id == _Hstest.id && age == _Hstest.age && Objects.equals(rowname, _Hstest.rowname) && Objects.equals(value, _Hstest.value) && Objects.equals(updatetime, _Hstest.updatetime) && Objects.deepEquals(body, _Hstest.body) && floa == _Hstest.floa && level == _Hstest.level;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id , age , rowname , value , updatetime , Arrays.hashCode(body) , floa , level);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(id , age , rowname , value , updatetime , Arrays.hashCode(body) , floa , level);
+	}
 }
