@@ -9,8 +9,10 @@ import java.util.Properties;
 
 public class DataSourceFactory {
 
+    public static String root = "";
+
     public static DataSource getDataSourceByMysql() {
-        String filePath = "mysql.properties";
+        String filePath = root+"mysql.properties";
         try {
             Properties p = new Properties();
             System.out.println("load druid properties >> " + filePath);
@@ -22,7 +24,7 @@ public class DataSourceFactory {
     }
 
     public static DataSource getDataSourceByPostgre() {
-        String filePath = "postgre.properties";
+        String filePath = root+"postgre.properties";
         try {
             Properties p = new Properties();
             System.out.println("load druid properties >> " + filePath);
@@ -34,7 +36,7 @@ public class DataSourceFactory {
     }
 
     public static DataSource getDataSourceBySqlite() {
-        String filePath = "sqlite.properties";
+        String filePath = root+"sqlite.properties";
         try {
             Properties p = new Properties();
             System.out.println("load druid properties >> " + filePath);
