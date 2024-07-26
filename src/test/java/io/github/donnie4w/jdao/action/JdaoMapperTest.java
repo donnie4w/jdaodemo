@@ -34,11 +34,39 @@ public class JdaoMapperTest {
             System.out.println(h);
         }
 
-        List<Hstest1> list2 = jdaoMapper.selectList("io.github.donnie4w.jdao.action.Mapperface2.selectHstest1", 1, 5);
+        List<Hstest1> list2 = jdaoMapper.selectList("io.github.donnie4w.jdao.action.Mapperface.selectHstest1", 5);
         for (Hstest1 h : list2) {
             System.out.println(h);
         }
     }
+
+    @Test
+    public void selectByMapperFace() throws JdaoException, JdaoClassException, SQLException {
+
+        Mapperface mapper = jdaoMapper.getMapper(Mapperface.class);
+
+        Hstest hs = mapper.selectHstestById(2, 26);
+        // 等价于
+        // Hstest hs = jdaoMapper.selectOne("io.github.donnie4w.jdao.action.Mapperface.selectHstestById", 2, 26);
+        System.out.println(hs);
+
+
+        List<Hstest> list = mapper.selectHstestById(Integer.valueOf(4), Integer.valueOf(30));
+        // 等价于
+        //List<Hstest> list = jdaoMapper.selectList("io.github.donnie4w.jdao.action.Mapperface.selectHstestById", 4, 30);
+        for (Hstest h : list) {
+            System.out.println(h);
+        }
+
+
+        List<Hstest1> list2 = mapper.selectHstest1(Long.valueOf(5));
+        // 等价于
+        // List<Hstest1> list2 = jdaoMapper.selectList("io.github.donnie4w.jdao.action.Mapperface2.selectHstest1",  5);
+        for (Hstest1 h : list2) {
+            System.out.println(h);
+        }
+    }
+
 
     @Test
     public void insertByMapperId() throws JdaoException, SQLException, JdaoClassException {
@@ -187,6 +215,7 @@ public class JdaoMapperTest {
         //set slave DataSource to Mapperface
         JdaoSlave.bindClass(Mapperface.class, DataSourceFactory.getDataSourceByMysql(), DBType.MYSQL);
 
+
         Mapperface mf = jdaoMapper.getMapper(Mapperface.class);
         List<Hstest> listSlave = mf.selectHstest(10, 30);
         for (Hstest hstest : listSlave) {
@@ -196,6 +225,18 @@ public class JdaoMapperTest {
         //use sqlite DateSource
         List<Hstest> listMaster = Jdao.executeQueryList(Hstest.class, "select * from hstest where id<? and age<?", 10, 30);
         for (Hstest hstest : listMaster) {
+            System.out.println(hstest);
+        }
+    }
+
+    @Test
+    public void selectSlave2() throws JdaoException, JdaoClassException, SQLException {
+        //绑定mapperId的从库数据源
+        JdaoSlave.bindMapper("io.github.donnie4w.jdao.dao.Hstest.selectHstest", DataSourceFactory.getDataSourceByMysql(), DBType.MYSQL);
+
+        JdaoMapper session = JdaoMapper.newInstance();
+        List<Hstest> listSlave = session.selectList("io.github.donnie4w.jdao.dao.Hstest.selectHstest", 5, 20);
+        for (Hstest hstest : listSlave) {
             System.out.println(hstest);
         }
     }
