@@ -25,22 +25,21 @@ import io.github.donnie4w.jdao.handle.JdaoException;
 import io.github.donnie4w.jdao.util.Serializer;
 import java.util.Map;
 import java.util.HashMap;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Date;
-import java.math.BigDecimal;
+
 /**
- * dbtype:mysql ,database:hstest ,table:hstest2
+ * dbtype:sqlite ,database:hstest.db ,table:hstest2
  *
  * @version jdao version 2.0.1
- * @date 2024-07-19 21:12:49 
+ * @date 2024-07-24 14:37:41 
  */
-public class Hstest2 extends Table<Hstest2> implements Serializable {
+public class Hstest2 extends Table<Hstest2> {
 
-    private static final long serialVersionUID = 6118074828633154000L;
+	private static final long serialVersionUID = 6118074828633154000L;
 
-    private final static String TABLENAME_ = "hstest2";
+	private final static String TABLENAME_ = "hstest2";
 
 	public final static Fields<Hstest2> ID = new Fields("id");
 	public final static Fields<Hstest2> NAME = new Fields("name");
@@ -54,18 +53,19 @@ public class Hstest2 extends Table<Hstest2> implements Serializable {
 	public final static Fields<Hstest2> FLOG = new Fields("flog");
 	
 	public Hstest2() {
-        super(TABLENAME_, Hstest2.class);
-        super.initFields(ID,NAME,AGE,CREATETIME,MONEY,BYTES,FLOA,LEVEL,TYPE,FLOG);
-    }
+		super(TABLENAME_, Hstest2.class);
+		super.initFields(ID,NAME,AGE,CREATETIME,MONEY,BYTES,FLOA,LEVEL,TYPE,FLOG);
+	}
 
-    public Hstest2(String tableName) {
-        super(tableName, Hstest2.class);
-        super.initFields(ID,NAME,AGE,CREATETIME,MONEY,BYTES,FLOA,LEVEL,TYPE,FLOG);
-    }
+	public Hstest2(String tableName) {
+		super(tableName, Hstest2.class);
+		super.initFields(ID,NAME,AGE,CREATETIME,MONEY,BYTES,FLOA,LEVEL,TYPE,FLOG);
+	}
 
-    public void toJdao() {
-        super.init(Hstest2.class);
-    }
+	@Override
+	public void toJdao() {
+		super.init(Hstest2.class);
+	}
 
 	private long id;
 	private String name;
@@ -75,103 +75,105 @@ public class Hstest2 extends Table<Hstest2> implements Serializable {
 	private byte[] bytes;
 	private double floa;
 	private long level;
-	private BigDecimal type;
-	private BigDecimal flog;
+	private double type;
+	private double flog;
 
-    public long getId() {
-        return this.id;
-    }
+	public long getId() {
+		return this.id;
+	}
 
-    public void setId(long id) {
-        fieldPut(ID, id);
-        this.id = id;
-    }
+	public void setId(long id) {
+		fieldPut(ID, id);
+		this.id = id;
+	}
 
-    public String getName() {
-        return this.name;
-    }
+	public String getName() {
+		return this.name;
+	}
 
-    public void setName(String name) {
-        fieldPut(NAME, name);
-        this.name = name;
-    }
+	public void setName(String name) {
+		fieldPut(NAME, name);
+		this.name = name;
+	}
 
-    public long getAge() {
-        return this.age;
-    }
+	public long getAge() {
+		return this.age;
+	}
 
-    public void setAge(long age) {
-        fieldPut(AGE, age);
-        this.age = age;
-    }
+	public void setAge(long age) {
+		fieldPut(AGE, age);
+		this.age = age;
+	}
 
-    public Date getCreatetime() {
-        return this.createtime;
-    }
+	public Date getCreatetime() {
+		return this.createtime;
+	}
 
-    public void setCreatetime(Date createtime) {
-        fieldPut(CREATETIME, createtime);
-        this.createtime = createtime;
-    }
+	public void setCreatetime(Date createtime) {
+		fieldPut(CREATETIME, createtime);
+		this.createtime = createtime;
+	}
 
-    public double getMoney() {
-        return this.money;
-    }
+	public double getMoney() {
+		return this.money;
+	}
 
-    public void setMoney(double money) {
-        fieldPut(MONEY, money);
-        this.money = money;
-    }
+	public void setMoney(double money) {
+		fieldPut(MONEY, money);
+		this.money = money;
+	}
 
-    public byte[] getBytes() {
-        return this.bytes;
-    }
+	public byte[] getBytes() {
+		return this.bytes;
+	}
 
-    public void setBytes(byte[] bytes) {
-        fieldPut(BYTES, bytes);
-        this.bytes = bytes;
-    }
+	public void setBytes(byte[] bytes) {
+		fieldPut(BYTES, bytes);
+		this.bytes = bytes;
+	}
 
-    public double getFloa() {
-        return this.floa;
-    }
+	public double getFloa() {
+		return this.floa;
+	}
 
-    public void setFloa(double floa) {
-        fieldPut(FLOA, floa);
-        this.floa = floa;
-    }
+	public void setFloa(double floa) {
+		fieldPut(FLOA, floa);
+		this.floa = floa;
+	}
 
-    public long getLevel() {
-        return this.level;
-    }
+	public long getLevel() {
+		return this.level;
+	}
 
-    public void setLevel(long level) {
-        fieldPut(LEVEL, level);
-        this.level = level;
-    }
+	public void setLevel(long level) {
+		fieldPut(LEVEL, level);
+		this.level = level;
+	}
 
-    public BigDecimal getType() {
-        return this.type;
-    }
+	public double getType() {
+		return this.type;
+	}
 
-    public void setType(BigDecimal type) {
-        fieldPut(TYPE, type);
-        this.type = type;
-    }
+	public void setType(double type) {
+		fieldPut(TYPE, type);
+		this.type = type;
+	}
 
-    public BigDecimal getFlog() {
-        return this.flog;
-    }
+	public double getFlog() {
+		return this.flog;
+	}
 
-    public void setFlog(BigDecimal flog) {
-        fieldPut(FLOG, flog);
-        this.flog = flog;
-    }
+	public void setFlog(double flog) {
+		fieldPut(FLOG, flog);
+		this.flog = flog;
+	}
 
-    public String toString() {
-        return "id:" + id + " , " + "name:" + name + " , " + "age:" + age + " , " + "createtime:" + createtime + " , " + "money:" + money + " , " + "bytes:" + bytes + " , " + "floa:" + floa + " , " + "level:" + level + " , " + "type:" + type + " , " + "flog:" + flog;
-    }
+	@Override
+	public String toString() {
+		return "id:" + id + " , " + "name:" + name + " , " + "age:" + age + " , " + "createtime:" + createtime + " , " + "money:" + money + " , " + "bytes:" + bytes + " , " + "floa:" + floa + " , " + "level:" + level + " , " + "type:" + type + " , " + "flog:" + flog;
+	}
 
+	@Override
 	public Hstest2 copy(Hstest2 h) {
 		this.setId(h.getId());
 		this.setName(h.getName());
@@ -186,45 +188,47 @@ public class Hstest2 extends Table<Hstest2> implements Serializable {
 		return this;
 	}
 
-    public void scan(String fieldname, Object obj) throws JdaoException {
-        try {
-            switch (fieldname) {
-                case "id":
-                    setId(Util.asLong(obj));
-                    break;
-                case "name":
-                    setName(Util.asString(obj));
-                    break;
-                case "age":
-                    setAge(Util.asLong(obj));
-                    break;
-                case "createtime":
-                    setCreatetime(Util.asDate(obj));
-                    break;
-                case "money":
-                    setMoney(Util.asDouble(obj));
-                    break;
-                case "bytes":
-                    setBytes(Util.asBytes(obj));
-                    break;
-                case "floa":
-                    setFloa(Util.asDouble(obj));
-                    break;
-                case "level":
-                    setLevel(Util.asLong(obj));
-                    break;
-                case "type":
-                    setType(Util.asBigDecimal(obj));
-                    break;
-                case "flog":
-                    setFlog(Util.asBigDecimal(obj));
-                    break;
-            }
-        } catch (Exception e) {
-             throw new JdaoException(e);
-        }
+	@Override
+	public void scan(String fieldname, Object obj) throws JdaoException {
+		try {
+			switch (fieldname) {
+				case "id":
+					setId(Util.asLong(obj));
+ 					break;
+				case "name":
+					setName(Util.asString(obj));
+ 					break;
+				case "age":
+					setAge(Util.asLong(obj));
+ 					break;
+				case "createtime":
+					setCreatetime(Util.asDate(obj));
+ 					break;
+				case "money":
+					setMoney(Util.asDouble(obj));
+ 					break;
+				case "bytes":
+					setBytes(Util.asBytes(obj));
+ 					break;
+				case "floa":
+					setFloa(Util.asDouble(obj));
+ 					break;
+				case "level":
+					setLevel(Util.asLong(obj));
+ 					break;
+				case "type":
+					setType(Util.asDouble(obj));
+ 					break;
+				case "flog":
+					setFlog(Util.asDouble(obj));
+ 					break;
+			}
+		} catch (Exception e) {
+			throw new JdaoException(e);
+		}
 	}
 
+	@Override
 	public byte[] encode() {
 		Map<String, Object> map = new HashMap();
 		map.put("id", this.getId());
@@ -240,6 +244,7 @@ public class Hstest2 extends Table<Hstest2> implements Serializable {
 		return Serializer.encode(map);
 	}
 
+	@Override
 	public Hstest2 decode(byte[] bs) throws JdaoException {
 		Map<String, Object> map = Serializer.decode(bs);
 		if (map != null) {
@@ -250,16 +255,16 @@ public class Hstest2 extends Table<Hstest2> implements Serializable {
 		return this;
 	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
         Hstest2 _Hstest2 = (Hstest2) o;
-        return id == _Hstest2.id && Objects.equals(name, _Hstest2.name) && age == _Hstest2.age && Objects.equals(createtime, _Hstest2.createtime) && money == _Hstest2.money && Objects.deepEquals(bytes, _Hstest2.bytes) && floa == _Hstest2.floa && level == _Hstest2.level && Objects.equals(type, _Hstest2.type) && Objects.equals(flog, _Hstest2.flog);
-    }
+		return id == _Hstest2.id && Objects.equals(name, _Hstest2.name) && age == _Hstest2.age && Objects.equals(createtime, _Hstest2.createtime) && money == _Hstest2.money && Objects.deepEquals(bytes, _Hstest2.bytes) && floa == _Hstest2.floa && level == _Hstest2.level && type == _Hstest2.type && flog == _Hstest2.flog;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id , name , age , createtime , money , Arrays.hashCode(bytes) , floa , level , type , flog);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(id , name , age , createtime , money , Arrays.hashCode(bytes) , floa , level , type , flog);
+	}
 }
