@@ -29,7 +29,7 @@
     </select>
 
     <select id="selectHstest1" parameterType="int" resultType="io.github.donnie4w.jdao.dao.Hstest1">
-        SELECT * FROM hstest1  order by id desc limit #{limit}
+        SELECT * FROM hstest1 where id &gt; 1 and id &lt; 10 limit #{limit}
     </select>
 
     <!-- Insert a new hstest1 -->
