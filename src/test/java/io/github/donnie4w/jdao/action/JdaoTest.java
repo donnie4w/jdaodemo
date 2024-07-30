@@ -13,8 +13,6 @@ import org.junit.Test;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.*;
 
 public class JdaoTest {
@@ -51,8 +49,7 @@ public class JdaoTest {
         for (Hstest2 hs : list) {
             System.out.println(hs);
         }
-        Jdao.getDefaultDBhandle().executeQueryBean("select * from Hstest1  order by id desc limit ?", 5);
-        Jdao.setDataSource(Hstest.class, DataSourceFactory.getDataSourceByMysql(), DBType.MYSQL);
+        Jdao.executeQueryBean("select * from Hstest1  order by id desc limit ?", 5);
     }
 
 
@@ -309,7 +306,7 @@ public class JdaoTest {
     @Test
     public void jdaoSerialize() throws JdaoException, JdaoClassException, SQLException {
         DataSource db = DataSourceFactory.getDataSourceByMysql();
-        Jdao.setDataSource(Hstest.class,db,DBType.MYSQL);
+        Jdao.bindDataSource(Hstest.class,db,DBType.MYSQL);
         Hstest t = new Hstest();
         t.where(Hstest.ID.EQ(3));
         Hstest hs = t.select();
@@ -339,20 +336,23 @@ public class JdaoTest {
     public void slave() throws JdaoException, JdaoClassException, SQLException {
         System.out.println(Hstest.class.getPackageName());
         JdaoSlave.bindClass(Hstest.class, DataSourceFactory.getDataSourceByMysql(), DBType.MYSQL);
-        JdaoSlave.bindClass(Hstest.class, DataSourceFactory.getDataSourceByPostgre(), DBType.POSTGRESQL);
-
         Hstest t = new Hstest();
         t.where(Hstest.ID.EQ(3));
         Hstest hs = t.select();
         System.out.println(hs);
 
-
-        t = new Hstest().useMaster(true);
+        JdaoSlave.bindClass(Hstest.class, DataSourceFactory.getDataSourceByPostgre(), DBType.POSTGRESQL);
+        t = new Hstest();
         t.where(Hstest.ID.EQ(3));
         hs = t.select();
         System.out.println(hs);
 
         t = new Hstest().useDBhandle(Jdao.getDefaultDBhandle());
+        t.where(Hstest.ID.EQ(3));
+        hs = t.select();
+        System.out.println(hs);
+
+        t = new Hstest().useMaster(true);
         t.where(Hstest.ID.EQ(3));
         hs = t.select();
         System.out.println(hs);
@@ -374,7 +374,7 @@ public class JdaoTest {
         System.out.println("----------------------GET CACHE---------------------");
         System.out.println("hs.equals(hs2):" + hs.equals(hs2));
 
-        JdaoCache.removeClass(Hstest.class);
+        JdaoCache.unbindClass(Hstest.class);
         t2 = new Hstest();
         t2.where(Hstest.ID.EQ(3));
         hs2 = t2.select();
