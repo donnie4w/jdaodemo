@@ -81,12 +81,6 @@ public class DataBackup {
 
     /**
      * 恢复 Hstest表的备份数据，并打印
-     * @throws IOException
-     * @throws JdaoException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
      */
     @Test
     public void TestRecoverHstest() throws IOException, JdaoException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
@@ -95,14 +89,6 @@ public class DataBackup {
 
     /**
      * 备份Hstest表的数据到文件中
-     * @throws JdaoException
-     * @throws SQLException
-     * @throws JdaoClassException
-     * @throws IOException
-     * @throws InvocationTargetException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws NoSuchMethodException
      */
     @Test
     public void TestBackUpHstest() throws JdaoException, SQLException, JdaoClassException, IOException, InvocationTargetException, InstantiationException, IllegalAccessException, NoSuchMethodException {
