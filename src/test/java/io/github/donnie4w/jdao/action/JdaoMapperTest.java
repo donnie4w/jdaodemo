@@ -77,7 +77,7 @@ public class JdaoMapperTest {
         hs.setValue("abc".getBytes());
         jdaoMapper.insert("io.github.donnie4w.jdao.action.Mapperface.insertHstest1", hs);
 
-        Hstest1 hs1 = jdaoMapper.selectOne("io.github.donnie4w.jdao.action.Mapperface.selectHstest1", 1);
+        Hstest1 hs1 = Jdao.executeQuery(Hstest1.class,"select * from hstest1 order by id desc limit 1");
         System.out.println(hs1);
         System.out.println("hs1 vs hs >> " + hs1.getRowname().equals(hs.getRowname()));
     }
@@ -202,7 +202,31 @@ public class JdaoMapperTest {
         }
         System.out.println("------------------GET CACHE---------------------");
 
-        JdaoCache.removeMapper(Mapperface.class);
+        JdaoCache.unbindMapper(Mapperface.class);
+        list = mapper.selectHstest(5, 20);
+        for (Hstest hs : list) {
+            System.out.println(hs);
+        }
+        System.out.println("------------------NO USE CACHE---------------------");
+    }
+
+
+    @Test
+    public void selectCache2() throws JdaoException {
+        JdaoCache.bindMapper("io.github.donnie4w.jdao.action.Mapperface","selectHstest", new CacheHandle(100));
+        Mapperface mapper = jdaoMapper.getMapper(Mapperface.class);
+        List<Hstest> list = mapper.selectHstest(5, 20);
+        for (Hstest hs : list) {
+            System.out.println(hs);
+        }
+        System.out.println("------------------SET CACHE---------------------");
+
+        list = mapper.selectHstest(5, 20);
+        for (Hstest hs : list) {
+            System.out.println(hs);
+        }
+        System.out.println("------------------GET CACHE---------------------");
+        JdaoCache.unbindMapper(Mapperface.class);
         list = mapper.selectHstest(5, 20);
         for (Hstest hs : list) {
             System.out.println(hs);
@@ -213,8 +237,27 @@ public class JdaoMapperTest {
     @Test
     public void selectSlave() throws JdaoException, JdaoClassException, SQLException {
         //set slave DataSource to Mapperface
-        JdaoSlave.bindClass(Mapperface.class, DataSourceFactory.getDataSourceByMysql(), DBType.MYSQL);
+        JdaoSlave.bindMapper(Mapperface.class, DataSourceFactory.getDataSourceByMysql(), DBType.MYSQL);
 
+        Mapperface mf = jdaoMapper.getMapper(Mapperface.class);
+        List<Hstest> listSlave = mf.selectHstest(10, 30);
+        for (Hstest hstest : listSlave) {
+            System.out.println(hstest);
+        }
+
+        //unbind
+        JdaoSlave.unbindMapper(Mapperface.class);
+        mf = jdaoMapper.getMapper(Mapperface.class);
+        listSlave = mf.selectHstest(10, 30);
+        for (Hstest hstest : listSlave) {
+            System.out.println(hstest);
+        }
+    }
+
+    @Test
+    public void selectSlave1() throws JdaoException, JdaoClassException, SQLException {
+        //set slave DataSource to Mapperface
+        JdaoSlave.bindMapper(Mapperface.class, DataSourceFactory.getDataSourceByMysql(), DBType.MYSQL);
 
         Mapperface mf = jdaoMapper.getMapper(Mapperface.class);
         List<Hstest> listSlave = mf.selectHstest(10, 30);
@@ -231,12 +274,18 @@ public class JdaoMapperTest {
 
     @Test
     public void selectSlave2() throws JdaoException, JdaoClassException, SQLException {
-        //绑定mapperId的从库数据源
-        JdaoSlave.bindMapper("io.github.donnie4w.jdao.dao.Hstest.selectHstest", DataSourceFactory.getDataSourceByMysql(), DBType.MYSQL);
-
+        //绑定namespace的从库数据源
+        JdaoSlave.bindMapper("io.github.donnie4w.jdao.action.Mapperface","selectHstest", DataSourceFactory.getDataSourceByMysql(), DBType.MYSQL);
         JdaoMapper session = JdaoMapper.newInstance();
-        List<Hstest> listSlave = session.selectList("io.github.donnie4w.jdao.dao.Hstest.selectHstest", 5, 20);
+        List<Hstest> listSlave = session.selectList("io.github.donnie4w.jdao.action.Mapperface.selectHstest", 5, 30);
         for (Hstest hstest : listSlave) {
+            System.out.println(hstest);
+        }
+
+        JdaoMapper session1 = JdaoMapper.newInstance();
+        session1.useDBhandle(DataSourceFactory.getDataSourceByPostgre(),DBType.POSTGRESQL);
+        List<Hstest> list = session1.selectList("io.github.donnie4w.jdao.action.Mapperface.selectHstest", 5, 30);
+        for (Hstest hstest : list) {
             System.out.println(hstest);
         }
     }
