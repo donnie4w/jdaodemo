@@ -1,66 +1,30 @@
 ##  Jdao Test Demo [[English](https://github.com/donnie4w/jdaodemo/blob/master/README.md)]
 
-###### 这是Jdao的测试demo程序，已经打包sqlite测试数据库hstest.db文件,并生成元素数据。demo程序可以直接运行，除了需要测试读写分离或多数据源操作，其他Test默认操作hstest.db数据库数据，可以直接运行，查看数据操作结果。
+###### 这是Jdao的测试demo程序。所有示例程序均可以直接运行，无需额外再连接数据库， 数据已经打包工程中。
 
 ##### demo程序测试以下几个方面
 
-1. jdao的映射文件数据操作
-2. Jdao的事务，存储过程，批处理，序列化等操作
-3. Jdao接口的CRUD函数使用
-4. JdaoCache 缓存接口使用
-5. JdaoSlave数据读写分离绑定与移除操作
-6. JdaoMapper SQL文件映射与接口调用操作
+1. 标准化实体类如何自动生成  `builder_example`
+2. 标准化实体类的增删改查，事务，批处理操作 `dao_example`
+3. 标准化实体类的序列化  `serizlize_example`
+4. 原生SQL的增删改查，事务等操作  `nativesql_example`
+5. SqlBuilder如何创建动态原生SQL `nativesql_example` `SqlBuilderDemo`
+6. XML映射SQL的使用   `mapper_example`
+7. XML映射SQL的动态SQL如何使用  `mapper_example` `DynamicDemo`
+8. 数据读写分离使用示例    `Slave` 
+9. 数据缓存使用示例       `Cache`
+10. 数据表数据迁移示例     `DataTransfer` 
+11. 数据表数据备份示例     `DataBackup`
 
-### Jdao的详细使用说明请查看使用文档：https://tlnet.top/jdaodoc
+### Jdao的详细使用说明请查看[使用文档](https://tlnet.top/jdaodoc)
 
-## 以下是dome概述
+## 概述
 
-### 生成数据库表映射文件
+![](https://tlnet.top/statics/tlnet/5767.jpg)
 
-#####  代码构建工具下载：https://tlnet.top/download
+------
 
-###### 以window环境为例
-
-1.  生成配置文件: jdao.json
-
-```bash
-//生成配置文件
-win201_jdao.exe init
-```
-2.  修改jdao.json的数据库连接
-
-```text
-  "dbtype": "mysql",
-  "dbhost": "localhost",
-  "dbport": 3306,
-  "dbname": "hstest",
-  "dbuser": "root",
-  "dbpwd": "123456",
-  "package": "io.github.donnie4w.jdao.dao",
-```
-3.  执行数据文件生成命令
-```bash
-win201_jdao.exe -c jdao.json
-```
-##### 执行结果，生成文件
-
-```text
-io/github/donnie4w/jdao/dao/Hstest.java
-io/github/donnie4w/jdao/dao/Hstest1.java
-io/github/donnie4w/jdao/dao/Hstest2.java
-```
-
-4.  配置数据源，demo使用druid 数据连接池，并使用sqlite数据库
-
-##### sqlite.properties
-
-```text
-driverClassName=org.sqlite.JDBC
-url=jdbc:sqlite:hstest.db
-initialSize=10
-maxActive=20
-```
-##### java程序数据源获取
+#### java程序数据源获取
 
 ```java
 public static DataSource getDataSourceBySqlite() {
@@ -76,7 +40,7 @@ public static DataSource getDataSourceBySqlite() {
 }
 ```
 
-5.  Jdao设置数据源
+#### Jdao设置数据源
 
 ```java
 Jdao.init(DataSourceFactory.getDataSourceBySqlite(), DBType.SQLITE);
@@ -84,7 +48,7 @@ Jdao.init(DataSourceFactory.getDataSourceBySqlite(), DBType.SQLITE);
 Jdao.setLogger(true);
 ```
 
-6.  映射文件的基础操作
+#### 标准化实体类的基础操作
 
 ```java
 //查询
@@ -170,13 +134,14 @@ public void cache() throws JdaoException, JdaoClassException, SQLException {
     t.where(Hstest.ID.EQ(3));
     Hstest hs = t.select();
     System.out.println(hs);
+    
     Hstest t2 = new Hstest();
     t2.where(Hstest.ID.EQ(3));
     Hstest hs2 = t2.select();
     System.out.println(hs2);
     System.out.println("hs.equals(hs2):"+hs.equals(hs2)); 
 
-    JdaoCache.removeClass(Hstest.class);//移除缓存数据
+    JdaoCache.unbindClass(Hstest.class);//移除缓存数据
     t2 = new Hstest();
     t2.where(Hstest.ID.EQ(3));
     hs2 = t2.select();
@@ -216,7 +181,7 @@ public void transaction() throws JdaoException, SQLException, JdaoClassException
 }
 ```
 
-7.  Jdao基础CURD接口
+####  原生SQL执行
 
 ```java
 //查询
@@ -230,41 +195,41 @@ public void select() throws Exception {
 
 //新增
 @Test
-public void select() throws Exception {
+public void insert() throws Exception {
     Jdao.executeUpdate(tx, "insert into hstest1(`rowname`,`value`) values(?,?)", "uuuuu>>>>1", "ppppppppp");
     tx.commit();
 }
 ```
-##### mapper映射为java接口
+#### Mapper映射模块
 
+##### 示例1 
+
+```xml
+<select id="selectHstestById" parameterType="int" resultType="io.github.donnie4w.jdao.dao.Hstest">
+    SELECT *  FROM hstest  WHERE id &lt; #{id}  and age &lt; #{age}
+</select>
+```
 ```java
-public interface Mapperface {
-    List<Hstest> selectAllHstest();
-    List<Hstest> selectHstest(int id, int age);
-    Hstest selectHstestByMap(Map map);
-    List<Hstest> selectHstestByList(int id, int age);
-    Hstest[] selectHstestByList(List list);
-    Hstest selectHstestById(int id, int age);
-    List<Hstest> selectHstestById(Integer id, Integer age);
-    Hstest1 selectHstest1(int limit);
-    List<Hstest1> selectHstest1(long limit);
-    int insertHstest1(Hstest1 hs);
-    int updateHstest1(Hstest1 hs);
-    int deleteHstest1(Hstest1 hs);
-}
-
-
 @Test
-public void selectMapperFace() throws JdaoException, JdaoClassException, SQLException {
-    JdaoMapper jdaoMapper = JdaoMapper.newInstance();
-    Mapperface mapper = jdaoMapper.getMapper(Mapperface.class);
+public void selectOne() throws JdaoException, JdaoClassException, SQLException {
+    Hstest hs = jdaoMapper.selectOne("io.github.donnie4w.jdao.action.Mapperface.selectHstestById", 2, 26);
+    System.out.println(hs);
+}
+```
 
-    List<Hstest> list = mapper.selectHstestById(Integer.valueOf(5), Integer.valueOf(20));
-    for (Hstest hs : list) {
-        System.out.println(hs);
+##### 示例2
+
+```xml
+<select id="selectHstest1" parameterType="int" resultType="io.github.donnie4w.jdao.dao.Hstest1">
+    SELECT *  FROM hstest1  where id &gt; 1  and id &lt; 10 limit #{limit}
+</select>
+```
+```java
+@Test
+public void selectList() throws JdaoException, JdaoClassException, SQLException {
+    List<Hstest1> list2 = jdaoMapper.selectList("io.github.donnie4w.jdao.action.Mapperface.selectHstest1", 5);
+    for (Hstest1 h : list2) {
+        System.out.println(h);
     }
-
-    Hstest hstest = mapper.selectHstestById(5, 20);
-    System.out.println(hstest);
 }
 ```
