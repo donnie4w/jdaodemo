@@ -27,13 +27,12 @@ import io.github.donnie4w.jdao.base.Util;
 import io.github.donnie4w.jdao.util.Serializer;
 import io.github.donnie4w.jdao.handle.JdaoException;
 import java.util.Date;
-import java.math.BigDecimal;
 import java.util.Arrays;
 /**
  * dbtype: mysql, database: , table: hstest
  *
  * @version jdao version 2.0.1
- * @date 2024-08-03 23:06:10
+ * @date 2024-08-23 17:44:12
  */
 public class Hstest extends Table<Hstest> {
 
@@ -48,15 +47,18 @@ public class Hstest extends Table<Hstest> {
     public final static Fields<Hstest> BODY = new Fields("body");
     public final static Fields<Hstest> FLOA = new Fields("floa");
     public final static Fields<Hstest> LEVEL = new Fields("level");
+    public final static Fields<Hstest> CREATED_AT = new Fields("created_at");
+    public final static Fields<Hstest> UPDATED_AT = new Fields("updated_at");
+    public final static Fields<Hstest> DELETED_AT = new Fields("deleted_at");
 
     public Hstest() {
         super(TABLENAME_, Hstest.class);
-        super.initFields(ID, AGE, ROWNAME, VALUE, UPDATETIME, BODY, FLOA, LEVEL);
+        super.initFields(ID, AGE, ROWNAME, VALUE, UPDATETIME, BODY, FLOA, LEVEL, CREATED_AT, UPDATED_AT, DELETED_AT);
     }
 
     public Hstest(String tableName) {
         super(tableName, Hstest.class);
-        super.initFields(ID, AGE, ROWNAME, VALUE, UPDATETIME, BODY, FLOA, LEVEL);
+        super.initFields(ID, AGE, ROWNAME, VALUE, UPDATETIME, BODY, FLOA, LEVEL, CREATED_AT, UPDATED_AT, DELETED_AT);
     }
     private int id;
     public int getId() {
@@ -67,11 +69,11 @@ public class Hstest extends Table<Hstest> {
         this.id = id;
     }
 
-    private byte age;
-    public byte getAge() {
+    private long age;
+    public long getAge() {
         return this.age;
     }
-    public void setAge(byte age) {
+    public void setAge(long age) {
         fieldPut(AGE, age);
         this.age = age;
     }
@@ -112,11 +114,11 @@ public class Hstest extends Table<Hstest> {
         this.body = body;
     }
 
-    private BigDecimal floa;
-    public BigDecimal getFloa() {
+    private byte[] floa;
+    public byte[] getFloa() {
         return this.floa;
     }
-    public void setFloa(BigDecimal floa) {
+    public void setFloa(byte[] floa) {
         fieldPut(FLOA, floa);
         this.floa = floa;
     }
@@ -130,10 +132,37 @@ public class Hstest extends Table<Hstest> {
         this.level = level;
     }
 
+    private Date created_at;
+    public Date getCreated_at() {
+        return this.created_at;
+    }
+    public void setCreated_at(Date created_at) {
+        fieldPut(CREATED_AT, created_at);
+        this.created_at = created_at;
+    }
+
+    private Date updated_at;
+    public Date getUpdated_at() {
+        return this.updated_at;
+    }
+    public void setUpdated_at(Date updated_at) {
+        fieldPut(UPDATED_AT, updated_at);
+        this.updated_at = updated_at;
+    }
+
+    private Date deleted_at;
+    public Date getDeleted_at() {
+        return this.deleted_at;
+    }
+    public void setDeleted_at(Date deleted_at) {
+        fieldPut(DELETED_AT, deleted_at);
+        this.deleted_at = deleted_at;
+    }
+
 
     @Override
     public String toString() {
-        return "id:" + id + ", " + "age:" + age + ", " + "rowname:" + rowname + ", " + "value:" + value + ", " + "updatetime:" + updatetime + ", " + "body:" + body + ", " + "floa:" + floa + ", " + "level:" + level;
+        return "id:" + id + ", " + "age:" + age + ", " + "rowname:" + rowname + ", " + "value:" + value + ", " + "updatetime:" + updatetime + ", " + "body:" + body + ", " + "floa:" + floa + ", " + "level:" + level + ", " + "created_at:" + created_at + ", " + "updated_at:" + updated_at + ", " + "deleted_at:" + deleted_at;
     }
 
     @Override
@@ -146,6 +175,9 @@ public class Hstest extends Table<Hstest> {
         this.setBody(h.getBody());
         this.setFloa(h.getFloa());
         this.setLevel(h.getLevel());
+        this.setCreated_at(h.getCreated_at());
+        this.setUpdated_at(h.getUpdated_at());
+        this.setDeleted_at(h.getDeleted_at());
         return this;
     }
 
@@ -157,7 +189,7 @@ public class Hstest extends Table<Hstest> {
                     setId(Util.asInt(obj));
                     break;
                 case "age":
-                    setAge(Util.asByte(obj));
+                    setAge(Util.asLong(obj));
                     break;
                 case "rowname":
                     setRowname(Util.asString(obj));
@@ -172,10 +204,19 @@ public class Hstest extends Table<Hstest> {
                     setBody(Util.asBytes(obj));
                     break;
                 case "floa":
-                    setFloa(Util.asBigDecimal(obj));
+                    setFloa(Util.asBytes(obj));
                     break;
                 case "level":
                     setLevel(Util.asLong(obj));
+                    break;
+                case "created_at":
+                    setCreated_at(Util.asDate(obj));
+                    break;
+                case "updated_at":
+                    setUpdated_at(Util.asDate(obj));
+                    break;
+                case "deleted_at":
+                    setDeleted_at(Util.asDate(obj));
                     break;
             }
         } catch (Exception e) {
@@ -188,12 +229,12 @@ public class Hstest extends Table<Hstest> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Hstest _Hstest = (Hstest) o;
-        return id == _Hstest.id && age == _Hstest.age && Objects.equals(rowname, _Hstest.rowname) && Objects.equals(value, _Hstest.value) && Objects.equals(updatetime, _Hstest.updatetime) && Objects.deepEquals(body, _Hstest.body) && Objects.equals(floa, _Hstest.floa) && level == _Hstest.level;
+        return id == _Hstest.id && age == _Hstest.age && Objects.equals(rowname, _Hstest.rowname) && Objects.equals(value, _Hstest.value) && Objects.equals(updatetime, _Hstest.updatetime) && Objects.deepEquals(body, _Hstest.body) && Objects.deepEquals(floa, _Hstest.floa) && level == _Hstest.level && Objects.equals(created_at, _Hstest.created_at) && Objects.equals(updated_at, _Hstest.updated_at) && Objects.equals(deleted_at, _Hstest.deleted_at);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, age, rowname, value, updatetime, Arrays.hashCode(body), floa, level);
+        return Objects.hash(id, age, rowname, value, updatetime, Arrays.hashCode(body), Arrays.hashCode(floa), level, created_at, updated_at, deleted_at);
     }
 
     @Override
@@ -207,6 +248,9 @@ public class Hstest extends Table<Hstest> {
         map.put("body", this.getBody());
         map.put("floa", this.getFloa());
         map.put("level", this.getLevel());
+        map.put("created_at", this.getCreated_at());
+        map.put("updated_at", this.getUpdated_at());
+        map.put("deleted_at", this.getDeleted_at());
         return Serializer.encode(map);
     }
 
