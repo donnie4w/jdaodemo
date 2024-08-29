@@ -56,13 +56,7 @@ public class HstestService extends BaseDAO<Hstest>{
         return hst.selects();
     }
 
-    /**
-     * @param whereList 查询条件
-     * @return
-     * @throws JdaoException
-     * @throws JdaoClassException
-     * @throws SQLException
-     */
+
     @Override
     public List<Hstest> findByCriteria(Where<Hstest>... wheres) throws JdaoException, JdaoClassException, SQLException {
         Hstest hst = new Hstest();
