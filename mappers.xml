@@ -4,5 +4,6 @@
     <mappers>
         <mapper resource="jdao-config.xml"/>
         <mapper resource="jdao-config-2.xml"/>
+        <mapper resource="jdao-dynamic.xml"/>
     </mappers>
 </configuration>
