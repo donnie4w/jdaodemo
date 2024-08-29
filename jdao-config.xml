@@ -7,44 +7,147 @@
 
     <!-- Select all hstest -->
     <select id="selectAllHstest" resultType="io.github.donnie4w.jdao.dao.Hstest">
-        SELECT * FROM hstest
+        SELECT *
+        FROM hstest
     </select>
 
     <!-- Select hstest by id -->
     <select id="selectHstest" parameterType="int" resultType="io.github.donnie4w.jdao.dao.Hstest">
-        SELECT * FROM hstest WHERE id &lt; #{id} and age &lt; #{age}
+        SELECT *
+        FROM hstest
+        WHERE id &lt; #{id}
+          and age &lt; #{age}
     </select>
 
     <select id="selectHstestByMap" parameterType="map" resultType="io.github.donnie4w.jdao.dao.Hstest">
-        SELECT * FROM hstest WHERE id &lt; #{id} and age &lt; #{age}
+        SELECT *
+        FROM hstest
+        WHERE id &lt; #{id}
+          and age &lt; #{age}
     </select>
 
     <select id="selectHstestByList" parameterType="int[]" resultType="io.github.donnie4w.jdao.dao.Hstest">
-        SELECT * FROM hstest WHERE id &lt; #{id} and age &lt; #{age}
+        SELECT *
+        FROM hstest
+        WHERE id &lt; #{id}
+          and age &lt; #{age}
     </select>
 
     <!-- Select hstest1 by id -->
     <select id="selectHstestById" parameterType="int" resultType="io.github.donnie4w.jdao.dao.Hstest">
-        SELECT * FROM hstest  WHERE id &lt; #{id} and age &lt; #{age}
+        SELECT *
+        FROM hstest
+        WHERE id &lt; #{id}
+          and age &lt; #{age}
     </select>
 
     <select id="selectHstest1" parameterType="int" resultType="io.github.donnie4w.jdao.dao.Hstest1">
-        SELECT * FROM hstest1 where id &gt; 1 and id &lt; 10 limit #{limit}
+        SELECT *
+        FROM hstest1
+        where id &gt; 1
+          and id &lt; 10 limit #{limit}
     </select>
 
     <!-- Insert a new hstest1 -->
     <insert id="insertHstest1" parameterType="io.github.donnie4w.jdao.dao.Hstest1">
-        INSERT INTO hstest1 (rowname, value, goto) VALUES (#{rowname}, #{value}, #{goto})
+        INSERT INTO hstest1 (rowname, value, goto)
+        VALUES (#{rowname}, #{value}, #{goto})
     </insert>
 
     <!-- Update an existing hstest1 -->
     <update id="updateHstest1" parameterType="io.github.donnie4w.jdao.dao.Hstest1">
-        UPDATE hstest1 SET rowname=#{rowname},value=#{value},goto=#{goto}  WHERE id = #{id}
+        UPDATE hstest1
+        SET rowname=#{rowname},
+            value=#{value},
+            goto=#{goto}
+        WHERE id = #{id}
     </update>
 
     <!-- Delete a hstest1 by id -->
     <delete id="deleteHstest1" parameterType="io.github.donnie4w.jdao.dao.Hstest1">
-        DELETE FROM hstest1 WHERE id = #{id}
+        DELETE
+        FROM hstest1
+        WHERE id = #{id}
     </delete>
+
+    <!-- Dynamic sql -->
+    <select id="demo1" resultType="io.github.donnie4w.jdao.dao.Hstest">
+        SELECT * FROM hstest
+        <where>
+            <if test="rowname!= 'hello'">
+                and rowname = #{rowname}
+            </if>
+            <if test="id >0">
+                AND id = #{id}
+            </if>
+        </where>
+        <choose>
+            <when test="rowname != null">
+                AND rowname = #{rowname}
+            </when>
+            <when test="id != null">
+                AND id = #{id}
+            </when>
+            <otherwise>
+                AND id in (31,1)
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <!-- Dynamic sql -->
+    <select id="selectDynamicHstest2" resultType="io.github.donnie4w.jdao.dao.Hstest">
+        SELECT * FROM hstest WHERE
+        <trim prefixOverrides="AND|OR">
+            <if test="rowname != null">
+                AND rowname = #{rowname}
+            </if>
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectDynamicForeach" resultType="io.github.donnie4w.jdao.dao.Hstest">
+        SELECT * FROM hstest where 1=1 and id in
+        <foreach collection="" item="hstest" index="index" separator="," open="(" close=")">
+            <if test="hstest.id > 0">
+                #{hstest.id}
+            </if>
+        </foreach>
+    </select>
+
+    <select id="selectDynamicForeach2" resultType="io.github.donnie4w.jdao.dao.Hstest">
+        SELECT * FROM hstest where id in
+        <foreach collection="list" item="hstest" index="index" separator="," open="(" close=")">
+            <if test="hstest.id > 0">
+                #{hstest.id}
+            </if>
+        </foreach>
+        <if test="id>0">
+            id>=#{id}
+        </if>
+    </select>
+
+    <!-- Dynamic sql -->
+    <update id="updateDynamicHstest">
+        UPDATE hstest1
+        <set>
+            <trim suffixOverrides=",">
+                <if test="rowname != null">
+                    rowname = #{rowname},
+                </if>
+                <if test="value != null">
+                    value = #{value},
+                </if>
+                <if test="goto != null">
+                    goto = #{goto},
+                </if>
+            </trim>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
 
 </mapper>
