@@ -33,7 +33,7 @@ import java.util.Arrays;
  * dbtype: mysql, database: , table: hstest2
  *
  * @version jdao version 2.0.1
- * @date 2024-08-03 23:06:10
+ * @date 2024-08-23 17:44:13
  */
 public class Hstest2 extends Table<Hstest2> {
 
