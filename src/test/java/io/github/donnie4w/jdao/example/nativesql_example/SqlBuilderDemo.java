@@ -18,66 +18,53 @@ public class SqlBuilderDemo {
         Jdao.setLogger(true);
     }
 
-    //appendIf
+    //append appendIf
     @Test
-    public void sqlbuilder() throws JdaoException, SQLException {
+    public void testAppendIf() throws JdaoException, SQLException {
         Map<String, Object> context = new HashMap<>();
         context.put("id", 31);
-        context.put("rowname", "www>>>>2");
-        SqlBuilder builder = new SqlBuilder();
+
+        SqlBuilder builder = SqlBuilder.newInstance();
         builder.append("SELECT * FROM HSTEST where 1=1")
-                .appendIf("id>10 && id<30", context, "and id=?", context.get("id"))
-                .appendIf("id>30 && id<40", context, "and id in (?,?,?)", 10, 11, 12)
-                .appendIf("rowname!=null", context, "and rowname=?", context.get("rowname"))
+                .appendIf("id>0", context, "and id=?", context.get("id"))
                 .append("ORDER BY id ASC");
 
-        String sql = builder.getSql();
-        System.out.println("sql:" + sql);
-        System.out.println("params:" + Arrays.asList(builder.getParameters()));
-
-        List<DataBean> list = Jdao.executeQueryBeans(sql, builder.getParameters());
+        List<DataBean> list = builder.selectList();
         for (DataBean bean : list) {
             System.out.println(bean);
         }
     }
 
     //appendChoose
-    @Test
-    public void sqlbuilder2() throws JdaoException, SQLException {
-        Hstest hstest = new Hstest();
-        hstest.setRowname("www>>>>2");
-        hstest.setId(31);
-        hstest.setValue("2421209491375900");
-        hstest.setAge(31);
+@Test
+public void testAppendChoose() throws JdaoException, SQLException {
+    Hstest hstest = new Hstest();
+    hstest.setRowname("www>>>>2");
+    hstest.setId(31);
+    hstest.setValue("2421209491375900");
+    hstest.setAge(31);
 
-        SqlBuilder builder = new SqlBuilder();
-        builder.append("SELECT * FROM HSTEST where 1=1")
-                .appendIf("id>10 && id<30", hstest, "and id=?", hstest.getId())
-                .appendChoose(hstest, choose -> choose
-                        .when(" age > 30 && age<50", "AND age =?", hstest.getAge())
-                        .when("rowname!=null", "AND rowname like ?", "%www>>>>2%")
-                        .otherwise("AND id >0")
-                )
-                .append("ORDER BY id ASC");
-        String sql = builder.getSql();
-        System.out.println("sql:" + sql);
-        System.out.println("params:" + Arrays.asList(builder.getParameters()));
+    SqlBuilder builder = SqlBuilder.newInstance();
+    builder.append("SELECT * FROM HSTEST where 1=1")
+            .appendChoose(hstest, choose -> choose
+                    .when(" age <30 && age>10", "AND age =?", hstest.getAge())
+                    .when("rowname!=null", "AND rowname like ?", "%" + hstest.getRowname() + "%")
+                    .otherwise("AND id >0")).append("limit 2");
 
-        List<DataBean> list = Jdao.executeQueryBeans(sql, builder.getParameters());
-        for (DataBean bean : list) {
-            System.out.println(bean);
-        }
+    List<DataBean> list = builder.selectList();
+    for (DataBean bean : list) {
+        System.out.println(bean);
     }
+}
 
     //appendTrim
     @Test
-    public void sqlbuilder4() throws JdaoException, SQLException {
-
-        Map<String, Object> context = new HashMap<>();
+    public void testAppendTrim() throws JdaoException, SQLException {
+        Map<String, Object> context = new HashMap();
         context.put("id", 30);
         context.put("rowname", "www>>>10");
 
-        SqlBuilder builder = new SqlBuilder();
+        SqlBuilder builder = SqlBuilder.newInstance();
         builder.append("SELECT * FROM hstest")
                 .appendTrim("WHERE", null, "AND|OR", null, trimBuilder -> {
                     trimBuilder.appendIf("id > 10", context, "AND id > ?", context.get("id"))
@@ -87,13 +74,55 @@ public class SqlBuilderDemo {
                                     .otherwise("AND id >0")
                             );
                 })
-                .append("order by id ASC");
+                .append("limit 2");
 
-        String sql = builder.getSql();
-        System.out.println("sql:" + sql);
-        System.out.println("params:" + Arrays.asList(builder.getParameters()));
 
-        List<DataBean> list = Jdao.executeQueryBeans(sql, builder.getParameters());
+        List<DataBean> list = builder.selectList();
+        for (DataBean bean : list) {
+            System.out.println(bean);
+        }
+    }
+
+    //appendForeach
+    @Test
+    public void testAppendForeach() throws JdaoException, SQLException {
+        SqlBuilder builder = SqlBuilder.newInstance();
+        builder.append("SELECT * FROM hstest where id in")
+                .appendForeach(null, new int[]{31, 32, 33}, "item", ",", "(", ")", foreachBuilder -> foreachBuilder
+                        .body("#{item}")
+                );
+        List<DataBean> list = builder.selectList();
+        for (DataBean bean : list) {
+            System.out.println(bean);
+        }
+    }
+
+    //appendForeach
+    @Test
+    public void testAppendForeach2() throws JdaoException, SQLException {
+        SqlBuilder builder = SqlBuilder.newInstance();
+        builder.append("SELECT * FROM hstest where id in")
+                .appendForeach("list", new int[]{31, 32, 33}, "item", ",", "(", ")", foreachBuilder -> foreachBuilder
+                        .body("#{item}")
+                );
+        List<DataBean> list = builder.selectList();
+        for (DataBean bean : list) {
+            System.out.println(bean);
+        }
+    }
+
+
+    //appendForeach
+    @Test
+    public void testAppendForeach3() throws JdaoException, SQLException {
+        Map<String, Object> context = new HashMap<>();
+        context.put("ids", Arrays.asList(31, 32, 33));
+        SqlBuilder builder = SqlBuilder.newInstance();
+        builder.append("SELECT * FROM hstest where id in")
+                .appendForeach("ids", context, "item", ",", "(", ")", foreachBuilder -> foreachBuilder
+                        .body("#{item}")
+                );
+        List<DataBean> list = builder.selectList();
         for (DataBean bean : list) {
             System.out.println(bean);
         }
@@ -105,9 +134,9 @@ public class SqlBuilderDemo {
         Map<String, Object> context = new HashMap<>();
         context.put("id", 30);
         context.put("rowname", "www>>>10");
-        context.put("ids", new int[]{31, 32, 33});
+        context.put("ids", new int[]{31, 32, 33, 34, 35});
 
-        SqlBuilder builder = new SqlBuilder();
+        SqlBuilder builder = SqlBuilder.newInstance();
         builder.append("SELECT * FROM hstest where 1=1")
                 .appendChoose(context, choose -> choose
                         .when(" id > 40 && id<50", "AND id <> ?", context.get("id"))
@@ -118,13 +147,9 @@ public class SqlBuilderDemo {
                 .appendForeach("ids", context, "item", ",", "(", ")", foreachBuilder -> foreachBuilder
                         .body("#{item}")
                 )
-                .append("order by id ASC");
+                .append("limit 2");
 
-        String sql = builder.getSql();
-        System.out.println("sql:" + sql);
-        System.out.println("params:" + Arrays.asList(builder.getParameters()));
-
-        List<DataBean> list = Jdao.executeQueryBeans(sql, builder.getParameters());
+        List<DataBean> list = builder.selectList();
         for (DataBean bean : list) {
             System.out.println(bean);
         }
@@ -139,7 +164,7 @@ public class SqlBuilderDemo {
         hstest.setValue("2421209491375900");
         hstest.setAge(35);
 
-        SqlBuilder builder = new SqlBuilder();
+        SqlBuilder builder = SqlBuilder.newInstance();
         builder.append("update hstest")
                 .appendSet(setBuilder -> setBuilder
                         .appendTrim(null, null, null, ",", trimBuidler -> trimBuidler
@@ -150,11 +175,7 @@ public class SqlBuilderDemo {
                 )
                 .appendIf("id==31", hstest, "where id=?", hstest.getId())
                 .appendIf("id!=31", hstest, "where id=?", 1);
-        String sql = builder.getSql();
-        System.out.println("sql:" + sql);
-        System.out.println("params:" + Arrays.asList(builder.getParameters()));
 
-        int i = Jdao.executeUpdate(sql, builder.getParameters());
-        System.out.println(i);
+        int i = builder.exec();
     }
 }
