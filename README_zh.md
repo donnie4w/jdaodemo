@@ -18,6 +18,8 @@
 
 ### Jdao的详细使用说明请查看[使用文档](https://tlnet.top/jdaodoc)
 
+### [Jdao Github](https://github.com/donnie4w/jdao)
+
 ## 概述
 
 ![](https://tlnet.top/statics/tlnet/5767.jpg)
